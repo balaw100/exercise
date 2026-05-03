@@ -735,19 +735,14 @@ function showLog() {
   show('screen-log');
 }
 
-async function submitLog() {
+function submitLog() {
   const date = document.getElementById('log-date').value;
   const duration = document.getElementById('log-duration').value;
   if (!date || !duration) { alert('Please fill in both fields.'); return; }
 
-  if (WEBHOOK) {
-    try {
-      const params = new URLSearchParams({ date, day: currentDay, duration });
-      await fetch(`${WEBHOOK}?${params}`, { method: 'GET', mode: 'no-cors' });
-    } catch(e) {
-      console.warn('Webhook failed:', e);
-    }
-  }
+  const base = 'https://docs.google.com/forms/d/e/1FAIpQLScukYU8t4pgLHlF_8Rfn3mCnVkJSuAsy7zlsBJH9i0tdDAWqA/viewform';
+  const url = base + '?entry.1328336757=' + date + '&entry.1243571792=' + currentDay + '&entry.827214570=' + duration;
+  window.open(url, '_blank');
 
   hide('screen-log');
   show('screen-success');
