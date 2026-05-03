@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruce's Workout</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1c1b1b;
+    --bg2: #252424;
+    --bg3: #2e2d2d;
+    --gold: #f5a623;
+    --gold-dim: #c4831a;
+    --text: #e8e4dc;
+    --text-dim: #9a9590;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    width: 100%;
+    background: var(--bg2);
+    border-bottom: 1px solid #3a3838;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+  }
+
+  #progress-text {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 680px;
+    padding: 24px 20px;
+    flex: 1;
+  }
+
+  /* ── DAY SELECTOR ── */
+  #screen-select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    gap: 16px;
+  }
+
+  #screen-select h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  #screen-select p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .day-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 20px 32px;
+    border: 2px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+
+  .day-btn:hover, .day-btn:active {
+    background: var(--gold);
+    color: var(--bg);
+  }
+
+  .day-btn .sub {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    margin-top: 4px;
+    opacity: 0.75;
+  }
+
+  /* ── CIRCUIT VIEW ── */
+  #screen-workout { display: none; }
+
+  .circuit-header {
+    margin-bottom: 20px;
+  }
+
+  .circuit-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+  }
+
+  .circuit-header .rounds {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .exercise-card {
+    background: var(--bg2);
+    border: 1px solid #3a3838;
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .exercise-card:hover {
+    border-color: #555;
+  }
+
+  .exercise-info { flex: 1; }
+
+  .exercise-name {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .exercise-meta {
+    font-size: 0.8rem;
+    color: var(--gold);
+    font-weight: 400;
+    margin-bottom: 3px;
+  }
+
+  .exercise-notes {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-weight: 300;
+    line-height: 1.4;
+  }
+
+  .info-btn {
+    background: none;
+    border: 1px solid #3a3838;
+    color: var(--gold);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-top: 2px;
+  }
+
+  .info-btn:hover {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  /* ── STRETCH SECTION ── */
+  .stretch-header {
+    margin: 28px 0 16px;
+    padding-top: 20px;
+    border-top: 1px solid #3a3838;
+  }
+
+  .stretch-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--text-dim);
+  }
+
+  .stretch-card {
+    background: var(--bg);
+    border: 1px solid #2e2d2d;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* ── MODAL ── */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  #modal-overlay.open { display: flex; }
+
+  #modal-box {
+    background: var(--bg2);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+  }
+
+  #modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  #modal-body {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  #modal-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.3rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  #modal-close:hover { color: var(--text); }
+
+  /* ── NAV BUTTONS ── */
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    padding-bottom: 40px;
+  }
+
+  .btn-back {
+    flex: 1;
+    padding: 14px;
+    background: none;
+    border: 1px solid #3a3838;
+    color: var(--text-dim);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-back:hover { border-color: #666; color: var(--text); }
+
+  .btn-next {
+    flex: 2;
+    padding: 14px;
+    background: var(--gold);
+    border: none;
+    color: var(--bg);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-next:hover { background: #fdb93a; }
+
+  /* ── LOG SCREEN ── */
+  #screen-log { display: none; }
+
+  .log-card {
+    background: var(--bg2);
+    border: 1px solid #3a3838;
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    margin-top: 16px;
+  }
+
+  .log-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .log-card .subtitle {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .field-group {
+    margin-bottom: 20px;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .field-group input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid #3a3838;
+    border-radius: 6px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+  }
+
+  .field-group input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  .day-display {
+    background: var(--bg3);
+    border: 1px solid #3a3838;
+    border-radius: 6px;
+    padding: 12px 14px;
+    color: var(--gold);
+    font-size: 1rem;
+  }
+
+  .btn-log {
+    width: 100%;
+    padding: 16px;
+    background: var(--gold);
+    border: none;
+    color: var(--bg);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+
+  .btn-log:hover { background: #fdb93a; }
+
+  .btn-restart {
+    width: 100%;
+    padding: 14px;
+    background: none;
+    border: 1px solid #3a3838;
+    color: var(--text-dim);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+  }
+
+  .btn-restart:hover { border-color: #666; color: var(--text); }
+
+  /* ── SUCCESS ── */
+  #screen-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .success-icon {
+    font-size: 3rem;
+    margin-bottom: 8px;
+  }
+
+  #screen-success h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+  }
+
+  #screen-success p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    max-width: 280px;
+  }
+
+  /* ── LOADING ── */
+  #screen-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    gap: 16px;
+  }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #3a3838;
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #screen-loading p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  #error-msg {
+    display: none;
+    background: #3a1a1a;
+    border: 1px solid #7a3333;
+    border-radius: var(--radius);
+    padding: 16px;
+    color: #e88;
+    font-size: 0.85rem;
+    margin-top: 16px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar-wrap {
+    width: 100%;
+    height: 3px;
+    background: #3a3838;
+  }
+
+  #progress-bar {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.3s ease;
+  }
+
+  @media (max-width: 400px) {
+    header h1 { font-size: 1.1rem; }
+    .exercise-name { font-size: 0.95rem; }
+    .day-btn { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Bruce's Workout</h1>
+  <span id="progress-text"></span>
+</header>
+<div id="progress-bar-wrap"><div id="progress-bar" style="width:0%"></div></div>
+
+<div class="container">
+
+  <!-- LOADING -->
+  <div id="screen-loading">
+    <div class="spinner"></div>
+    <p>Loading workout data…</p>
+    <div id="error-msg"></div>
+  </div>
+
+  <!-- DAY SELECT -->
+  <div id="screen-select" style="display:none">
+    <h2>Good morning, Bruce.</h2>
+    <p>What's on the schedule today?</p>
+    <button class="day-btn" onclick="startDay('Long')">
+      Long Day
+      <span class="sub">5 circuits · ~30 min</span>
+    </button>
+    <button class="day-btn" onclick="startDay('Short')">
+      Short Day
+      <span class="sub">3 circuits · ~15 min</span>
+    </button>
+  </div>
+
+  <!-- WORKOUT -->
+  <div id="screen-workout"></div>
+
+  <!-- LOG -->
+  <div id="screen-log">
+    <div class="log-card">
+      <h2>Log This Workout</h2>
+      <p class="subtitle">Nice work. Record it.</p>
+      <div class="field-group">
+        <label>Day Type</label>
+        <div class="day-display" id="log-day-display"></div>
+      </div>
+      <div class="field-group">
+        <label>Date</label>
+        <input type="date" id="log-date">
+      </div>
+      <div class="field-group">
+        <label>Duration (minutes)</label>
+        <input type="number" id="log-duration" placeholder="e.g. 32" min="1" max="120">
+      </div>
+      <button class="btn-log" onclick="submitLog()">Save Workout</button>
+      <button class="btn-restart" onclick="showSelect()">← Start Over</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="screen-success">
+    <div class="success-icon">✓</div>
+    <h2>Logged.</h2>
+    <p>Workout recorded successfully.</p>
+    <button class="btn-restart" style="margin-top:24px;max-width:280px" onclick="showSelect()">Start Another</button>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal-box">
+    <button id="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-title"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = '13_fncUAXHUj_vNJh4ZQ3EamA0G4OitcVjMRCIQc3Wlw';
+const API_KEY  = 'AIzaSyAL-1ytYPq_BnQhEW8huck85Q05Xp5uIuc';
+const WEBHOOK  = ''; // Add Apps Script URL here later
+
+let allData = { Long: [], Short: [], definitions: {} };
+let currentDay = '';
+let currentStep = 0; // 0..N-1 = circuits, N = stretches, N+1 = log
+let steps = []; // array of {type:'circuit'|'stretch', label, rounds, exercises}
+
+// ── FETCH & PARSE ──────────────────────────────────────────────
+async function loadData() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    parseSheet(json.values);
+    show('screen-select');
+    hide('screen-loading');
+  } catch(e) {
+    document.getElementById('error-msg').style.display = 'block';
+    document.getElementById('error-msg').textContent = 'Could not load workout data. Check API key or sheet permissions. (' + e.message + ')';
+  }
+}
+
+function parseSheet(rows) {
+  let currentDay = null;
+  let currentCircuit = null;
+  let inDefinitions = false;
+
+  for (const row of rows) {
+    const [col0, col1, col2, col3, col4] = row.map(c => (c||'').trim());
+
+    if (!col0 && !col1) continue;
+
+    // Section headers
+    if (col0.startsWith('DAY 1')) { currentDay = 'Long'; inDefinitions = false; continue; }
+    if (col0.startsWith('DAY 2')) { currentDay = 'Short'; inDefinitions = false; continue; }
+    if (col0 === 'DEFINITIONS') { inDefinitions = true; continue; }
+
+    if (inDefinitions) {
+      if (col0) allData.definitions[col0] = col1;
+      continue;
+    }
+
+    if (!currentDay) continue;
+
+    const day = col0; // 'Long' or 'Short'
+    if (!day || (day !== 'Long' && day !== 'Short')) continue;
+
+    // Circuit / Stretch header rows
+    if (col1.match(/^Circuit \d+/i)) {
+      currentCircuit = { type: 'circuit', label: col1, rounds: col2 || '', exercises: [] };
+      allData[day].push(currentCircuit);
+      continue;
+    }
+    if (col1 === 'Stretches') {
+      currentCircuit = { type: 'stretch', label: 'Stretches', rounds: '', exercises: [] };
+      allData[day].push(currentCircuit);
+      continue;
+    }
+
+    // Exercise rows
+    if (currentCircuit && col1 && col1 !== 'Exercise') {
+      currentCircuit.exercises.push({ name: col1, sets: col2, reps: col3, notes: col4 });
+    }
+  }
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────
+function startDay(day) {
+  currentDay = day;
+  steps = allData[day];
+  currentStep = 0;
+  renderStep();
+  show('screen-workout');
+  hide('screen-select');
+}
+
+function renderStep() {
+  const total = steps.length;
+  const pct = Math.round((currentStep / total) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  const isLast = currentStep === total - 1;
+  const step = steps[currentStep];
+
+  // Progress label
+  const circuitSteps = steps.filter(s => s.type === 'circuit');
+  const circuitIdx = steps.slice(0, currentStep + 1).filter(s => s.type === 'circuit').length;
+  if (step.type === 'circuit') {
+    document.getElementById('progress-text').textContent = `Circuit ${circuitIdx} of ${circuitSteps.length}`;
+  } else {
+    document.getElementById('progress-text').textContent = 'Stretches';
+  }
+
+  let html = '';
+
+  if (step.type === 'circuit') {
+    html += `<div class="circuit-header">
+      <h2>${step.label}</h2>
+      ${step.rounds ? `<div class="rounds">${step.rounds}</div>` : ''}
+    </div>`;
+    for (const ex of step.exercises) {
+      const hasDef = !!allData.definitions[ex.name];
+      const meta = [ex.sets ? ex.sets + ' sets' : '', ex.reps || ''].filter(Boolean).join(' · ');
+      html += `<div class="exercise-card">
+        <div class="exercise-info">
+          <div class="exercise-name">${ex.name}</div>
+          ${meta ? `<div class="exercise-meta">${meta}</div>` : ''}
+          ${ex.notes && ex.notes !== 'See definitions below' ? `<div class="exercise-notes">${ex.notes}</div>` : ''}
+        </div>
+        ${hasDef ? `<button class="info-btn" onclick="showDef('${ex.name.replace(/'/g,"\\'")}')">ℹ</button>` : ''}
+      </div>`;
+    }
+  } else {
+    // Stretch section
+    html += `<div class="stretch-header"><h2>Stretches</h2></div>`;
+    for (const ex of step.exercises) {
+      const hasDef = !!allData.definitions[ex.name];
+      const dur = ex.reps || ex.sets || '';
+      html += `<div class="stretch-card">
+        <div class="exercise-info">
+          <div class="exercise-name">${ex.name}</div>
+          ${dur ? `<div class="exercise-meta">${dur}</div>` : ''}
+          ${ex.notes && ex.notes !== 'See definitions below' ? `<div class="exercise-notes">${ex.notes}</div>` : ''}
+        </div>
+        ${hasDef ? `<button class="info-btn" onclick="showDef('${ex.name.replace(/'/g,"\\'")}')">ℹ</button>` : ''}
+      </div>`;
+    }
+  }
+
+  // Nav buttons
+  html += `<div class="nav-row">
+    ${currentStep > 0 ? `<button class="btn-back" onclick="goBack()">← Back</button>` : ''}
+    <button class="btn-next" onclick="goNext()">${isLast ? 'Finish & Log →' : 'Next →'}</button>
+  </div>`;
+
+  document.getElementById('screen-workout').innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function goNext() {
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    renderStep();
+  } else {
+    showLog();
+  }
+}
+
+function goBack() {
+  if (currentStep > 0) {
+    currentStep--;
+    renderStep();
+  }
+}
+
+// ── LOG ─────────────────────────────────────────────────────────
+function showLog() {
+  hide('screen-workout');
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('progress-text').textContent = 'Done!';
+  document.getElementById('log-day-display').textContent = currentDay + ' Day';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('log-date').value = today;
+  show('screen-log');
+}
+
+async function submitLog() {
+  const date = document.getElementById('log-date').value;
+  const duration = document.getElementById('log-duration').value;
+  if (!date || !duration) { alert('Please fill in both fields.'); return; }
+
+  if (WEBHOOK) {
+    try {
+      await fetch(WEBHOOK, {
+        method: 'POST',
+        body: JSON.stringify({ day: currentDay, date, duration }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch(e) {
+      console.warn('Webhook failed:', e);
+    }
+  }
+
+  hide('screen-log');
+  show('screen-success');
+  document.getElementById('screen-success').style.display = 'flex';
+}
+
+function showSelect() {
+  hide('screen-workout');
+  hide('screen-log');
+  hide('screen-success');
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('progress-text').textContent = '';
+  show('screen-select');
+}
+
+// ── MODAL ───────────────────────────────────────────────────────
+function showDef(name) {
+  const def = allData.definitions[name];
+  if (!def) return;
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-body').textContent = def;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || e.currentTarget.id === 'modal-close') {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+// ── UTILS ───────────────────────────────────────────────────────
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+loadData();
+</script>
+</body>
+</html>
