@@ -568,7 +568,7 @@
 <script>
 const SHEET_ID = '13_fncUAXHUj_vNJh4ZQ3EamA0G4OitcVjMRCIQc3Wlw';
 const API_KEY  = 'AIzaSyAL-1ytYPq_BnQhEW8huck85Q05Xp5uIuc';
-const WEBHOOK  = 'https://script.google.com/macros/s/AKfycbz0-Kgw3R9rC1KrOpaic2_u3OprfSOsjZ7gb56GxdUdS6hyekl2sRcQCOsJ57mGGriDET4/exec';
+const WEBHOOK  = 'https://script.google.com/macros/s/AKfycbzMHhcFJlPdPpjOOYpduPq6Rm9GN_zd9j4XS7C6EnIgq86v-BOh7JZ__-8poVjC8Jh7cUzF/exec';
 
 let allData = { Long: [], Short: [], definitions: {} };
 let currentDay = '';
@@ -742,11 +742,8 @@ async function submitLog() {
 
   if (WEBHOOK) {
     try {
-      await fetch(WEBHOOK, {
-        method: 'POST', mode: 'no-cors',
-        body: JSON.stringify({ day: currentDay, date, duration }),
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const params = new URLSearchParams({ date, day: currentDay, duration });
+      await fetch(`${WEBHOOK}?${params}`, { method: 'GET', mode: 'no-cors' });
     } catch(e) {
       console.warn('Webhook failed:', e);
     }
