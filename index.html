@@ -59,13 +59,13 @@
     flex: 1;
   }
 
-  /* ── DAY SELECTOR ── */
+  /* DAY SELECTOR */
   #screen-select {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 70vh;
+    justify-content: flex-start;
+    padding-top: 32px;
     gap: 16px;
   }
 
@@ -73,16 +73,43 @@
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem;
     color: var(--text);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     text-align: center;
   }
 
   #screen-select p {
     color: var(--text-dim);
-    font-size: 1.3rem;
-    margin-bottom: 24px;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
     text-align: center;
   }
+
+  /* TAB SWITCHER */
+  .tab-switcher {
+    display: flex;
+    width: 100%;
+    max-width: 320px;
+    background: var(--bg3);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 16px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active { background: var(--gold); color: var(--bg); }
 
   .day-btn {
     width: 100%;
@@ -99,10 +126,7 @@
     letter-spacing: 0.03em;
   }
 
-  .day-btn:hover, .day-btn:active {
-    background: var(--gold);
-    color: var(--bg);
-  }
+  .day-btn:hover, .day-btn:active { background: var(--gold); color: var(--bg); }
 
   .day-btn .sub {
     display: block;
@@ -113,7 +137,84 @@
     opacity: 0.75;
   }
 
-  /* ── TIMER DISPLAY ── */
+  /* HISTORY */
+  #tab-history-content { width: 100%; max-width: 480px; }
+
+  .history-loading {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 40px 0;
+    font-size: 0.9rem;
+  }
+
+  .history-empty {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 60px 0;
+    font-size: 1rem;
+  }
+
+  .history-card {
+    background: var(--bg2);
+    border: 1px solid #3a3838;
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .history-card:hover { border-color: #555; }
+  .history-card.open { border-color: var(--gold-dim); }
+
+  .history-card-header {
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .history-card-left { flex: 1; }
+
+  .history-date {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .history-meta { font-size: 0.9rem; color: var(--text-dim); }
+
+  .history-chevron {
+    color: var(--text-dim);
+    font-size: 1rem;
+    transition: transform 0.2s;
+    margin-left: 12px;
+  }
+
+  .history-card.open .history-chevron { transform: rotate(180deg); }
+
+  .history-card-body {
+    display: none;
+    padding: 12px 18px 16px;
+    border-top: 1px solid #3a3838;
+  }
+
+  .history-card.open .history-card-body { display: block; }
+
+  .history-exercise-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #2e2d2d;
+    font-size: 0.95rem;
+  }
+
+  .history-exercise-row:last-child { border-bottom: none; }
+  .history-ex-name { color: var(--text-dim); }
+  .history-ex-val { color: var(--gold); font-weight: 500; }
+
+  /* TIMER */
   #timer-bar {
     display: none;
     width: 100%;
@@ -131,12 +232,10 @@
     letter-spacing: 0.08em;
   }
 
-  /* ── CIRCUIT VIEW ── */
+  /* CIRCUIT VIEW */
   #screen-workout { display: none; }
 
-  .circuit-header {
-    margin-bottom: 20px;
-  }
+  .circuit-header { margin-bottom: 20px; }
 
   .circuit-header h2 {
     font-family: 'Playfair Display', serif;
@@ -164,7 +263,6 @@
   }
 
   .exercise-card:hover { border-color: #555; }
-
   .exercise-info { flex: 1; }
 
   .exercise-name {
@@ -205,13 +303,9 @@
     margin-top: 2px;
   }
 
-  .info-btn:hover {
-    background: var(--gold);
-    color: var(--bg);
-    border-color: var(--gold);
-  }
+  .info-btn:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
 
-  /* ── STRETCH SECTION ── */
+  /* STRETCH SECTION */
   .stretch-header {
     margin: 28px 0 16px;
     padding-top: 20px;
@@ -235,7 +329,7 @@
     gap: 12px;
   }
 
-  /* ── MODAL ── */
+  /* MODAL */
   #modal-overlay {
     display: none;
     position: fixed;
@@ -287,7 +381,7 @@
 
   #modal-close:hover { color: var(--text); }
 
-  /* ── NAV BUTTONS ── */
+  /* NAV BUTTONS */
   .nav-row {
     display: flex;
     gap: 12px;
@@ -326,7 +420,7 @@
 
   .btn-next:hover { background: #fdb93a; }
 
-  /* ── LOG SCREEN ── */
+  /* LOG SCREEN */
   #screen-log { display: none; }
 
   .log-card {
@@ -360,10 +454,7 @@
     line-height: 1.8;
   }
 
-  .log-summary strong {
-    color: var(--gold);
-    font-weight: 500;
-  }
+  .log-summary strong { color: var(--gold); font-weight: 500; }
 
   .btn-log {
     width: 100%;
@@ -399,7 +490,7 @@
 
   .btn-restart:hover { border-color: #666; color: var(--text); }
 
-  /* ── SUCCESS ── */
+  /* SUCCESS */
   #screen-success {
     display: none;
     flex-direction: column;
@@ -418,13 +509,9 @@
     color: var(--gold);
   }
 
-  #screen-success p {
-    color: var(--text-dim);
-    font-size: 0.9rem;
-    max-width: 280px;
-  }
+  #screen-success p { color: var(--text-dim); font-size: 0.9rem; max-width: 280px; }
 
-  /* ── LOADING ── */
+  /* LOADING */
   #screen-loading {
     display: flex;
     flex-direction: column;
@@ -458,7 +545,7 @@
     margin-top: 16px;
   }
 
-  /* ── PROGRESS BAR ── */
+  /* PROGRESS BAR */
   #progress-bar-wrap { width: 100%; height: 3px; background: #3a3838; }
   #progress-bar { height: 100%; background: var(--gold); transition: width 0.3s ease; }
 
@@ -490,15 +577,24 @@
   <!-- DAY SELECT -->
   <div id="screen-select" style="display:none">
     <h2>Good morning, Bruce.</h2>
-    <p>What's on the schedule today?</p>
-    <button class="day-btn" onclick="startDay('Long')">
-      Long Day
-      <span class="sub">5 circuits · ~30 min</span>
-    </button>
-    <button class="day-btn" onclick="startDay('Short')">
-      Short Day
-      <span class="sub">3 circuits · ~15 min</span>
-    </button>
+    <p id="select-subtitle">What's on the schedule today?</p>
+    <div class="tab-switcher">
+      <button class="tab-btn active" id="tab-workout-btn" onclick="switchTab('workout')">Workout</button>
+      <button class="tab-btn" id="tab-history-btn" onclick="switchTab('history')">History</button>
+    </div>
+    <div id="tab-workout-content">
+      <button class="day-btn" onclick="startDay('Long')">
+        Long Day
+        <span class="sub">5 circuits · ~30 min</span>
+      </button>
+      <button class="day-btn" onclick="startDay('Short')">
+        Short Day
+        <span class="sub">3 circuits · ~15 min</span>
+      </button>
+    </div>
+    <div id="tab-history-content" style="display:none; width:100%; max-width:480px">
+      <div id="history-list"><div class="history-loading">Loading history…</div></div>
+    </div>
   </div>
 
   <!-- WORKOUT -->
@@ -535,29 +631,26 @@
 </div>
 
 <script>
-const SHEET_ID = '13_fncUAXHUj_vNJh4ZQ3EamA0G4OitcVjMRCIQc3Wlw';
-const API_KEY  = 'AIzaSyAL-1ytYPq_BnQhEW8huck85Q05Xp5uIuc';
+const SHEET_ID    = '13_fncUAXHUj_vNJh4ZQ3EamA0G4OitcVjMRCIQc3Wlw';
+const LOG_SHEET_ID = '1ZZKYdoCq6GZMKr49nCxtB6JnC3HoDu_qf7JeaaNmw4U';
+const API_KEY     = 'AIzaSyAL-1ytYPq_BnQhEW8huck85Q05Xp5uIuc';
 const LOG_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwmMCVz2IdzxTMvsSiT3DJNFOhrMoD5oM7_RtTfQPJWFwCMPB-ETdXqj1b8nXpnF4EEb0XJ/exec';
 
 let allData = { Long: [], Short: [], definitions: {} };
 let currentDay = '';
 let currentStep = 0;
 let steps = [];
+let historyLoaded = false;
 
-// ── TIMER ──────────────────────────────────────────────────────
+// TIMER
 let timerInterval = null;
 let timerSeconds = 0;
-let workoutStartTime = null;
 
 function startTimer() {
   timerSeconds = 0;
-  workoutStartTime = new Date();
   document.getElementById('timer-bar').style.display = 'block';
   updateTimerDisplay();
-  timerInterval = setInterval(() => {
-    timerSeconds++;
-    updateTimerDisplay();
-  }, 1000);
+  timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
 }
 
 function stopTimer() {
@@ -575,7 +668,7 @@ function getElapsedMinutes() {
   return Math.round(timerSeconds / 60);
 }
 
-// ── FETCH & PARSE ──────────────────────────────────────────────
+// FETCH & PARSE WORKOUT SHEET
 async function loadData() {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
   try {
@@ -592,7 +685,7 @@ async function loadData() {
 }
 
 function parseSheet(rows) {
-  let currentDay = null;
+  let curDay = null;
   let currentCircuit = null;
   let inDefinitions = false;
 
@@ -600,16 +693,12 @@ function parseSheet(rows) {
     const [col0, col1, col2, col3, col4] = row.map(c => (c||'').trim());
     if (!col0 && !col1) continue;
 
-    if (col0.startsWith('DAY 1')) { currentDay = 'Long'; inDefinitions = false; continue; }
-    if (col0.startsWith('DAY 2')) { currentDay = 'Short'; inDefinitions = false; continue; }
+    if (col0.startsWith('DAY 1')) { curDay = 'Long'; inDefinitions = false; continue; }
+    if (col0.startsWith('DAY 2')) { curDay = 'Short'; inDefinitions = false; continue; }
     if (col0 === 'DEFINITIONS') { inDefinitions = true; continue; }
 
-    if (inDefinitions) {
-      if (col0) allData.definitions[col0] = col1;
-      continue;
-    }
-
-    if (!currentDay) continue;
+    if (inDefinitions) { if (col0) allData.definitions[col0] = col1; continue; }
+    if (!curDay) continue;
     const day = col0;
     if (!day || (day !== 'Long' && day !== 'Short')) continue;
 
@@ -623,24 +712,116 @@ function parseSheet(rows) {
       allData[day].push(currentCircuit);
       continue;
     }
-
     if (currentCircuit && col1 && col1 !== 'Exercise') {
-      currentCircuit.exercises.push({ name: col1, sets: col2, reps: col3, weight: col4 || '', notes: col4 || '' });
+      currentCircuit.exercises.push({ name: col1, sets: col2, reps: col3, notes: col4 || '' });
     }
   }
 }
 
-// ── BUILD EXERCISE SNAPSHOT ────────────────────────────────────
+// TAB SWITCHER
+function switchTab(tab) {
+  const workoutBtn = document.getElementById('tab-workout-btn');
+  const historyBtn = document.getElementById('tab-history-btn');
+  const workoutContent = document.getElementById('tab-workout-content');
+  const historyContent = document.getElementById('tab-history-content');
+  const subtitle = document.getElementById('select-subtitle');
+
+  if (tab === 'workout') {
+    workoutBtn.classList.add('active');
+    historyBtn.classList.remove('active');
+    workoutContent.style.display = 'flex';
+    workoutContent.style.flexDirection = 'column';
+    workoutContent.style.alignItems = 'center';
+    workoutContent.style.gap = '16px';
+    historyContent.style.display = 'none';
+    subtitle.textContent = "What's on the schedule today?";
+  } else {
+    historyBtn.classList.add('active');
+    workoutBtn.classList.remove('active');
+    workoutContent.style.display = 'none';
+    historyContent.style.display = 'block';
+    subtitle.textContent = 'Your workout history.';
+    if (!historyLoaded) loadHistory();
+  }
+}
+
+// LOAD HISTORY FROM LOG SHEET
+async function loadHistory() {
+  historyLoaded = true;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${LOG_SHEET_ID}/values/Sheet1?key=${API_KEY}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    renderHistory(json.values || []);
+  } catch(e) {
+    document.getElementById('history-list').innerHTML =
+      '<div class="history-empty">Could not load history.</div>';
+  }
+}
+
+function renderHistory(rows) {
+  if (!rows || rows.length < 2) {
+    document.getElementById('history-list').innerHTML =
+      '<div class="history-empty">No workouts logged yet.</div>';
+    return;
+  }
+
+  const headers = rows[0];
+  const dataRows = rows.slice(1).reverse(); // newest first
+
+  let html = '';
+  dataRows.forEach((row, idx) => {
+    const date = row[0] || '';
+    const dayType = row[1] || '';
+    const duration = row[2] || '';
+    if (!date) return;
+
+    // Format date nicely
+    const dateObj = new Date(date + 'T12:00:00');
+    const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+    // Build exercise rows (cols 3+)
+    let exHtml = '';
+    for (let i = 3; i < headers.length; i++) {
+      const name = headers[i] || '';
+      const val = row[i] || '';
+      if (!name) continue;
+      exHtml += `<div class="history-exercise-row">
+        <span class="history-ex-name">${name}</span>
+        <span class="history-ex-val">${val || '—'}</span>
+      </div>`;
+    }
+
+    html += `<div class="history-card" id="hcard-${idx}" onclick="toggleHistoryCard(${idx})">
+      <div class="history-card-header">
+        <div class="history-card-left">
+          <div class="history-date">${dateStr}</div>
+          <div class="history-meta">${dayType} Day · ${duration} min</div>
+        </div>
+        <span class="history-chevron">▾</span>
+      </div>
+      <div class="history-card-body">${exHtml}</div>
+    </div>`;
+  });
+
+  document.getElementById('history-list').innerHTML = html || '<div class="history-empty">No workouts logged yet.</div>';
+}
+
+function toggleHistoryCard(idx) {
+  const card = document.getElementById('hcard-' + idx);
+  card.classList.toggle('open');
+}
+
+// BUILD EXERCISE SNAPSHOT
 function extractWeight(notes) {
-  // Only pull out weight values like "25 lb" or "3lb" — ignore everything else
   const match = notes.match(/(\d+\.?\d*)\s*lb/i);
   return match ? match[1] + ' lb' : null;
 }
 
 function buildExerciseSnapshot(day) {
   const snapshot = {};
-  const daySteps = allData[day];
-  for (const step of daySteps) {
+  for (const step of allData[day]) {
     for (const ex of step.exercises) {
       let desc = '';
       if (step.type === 'stretch') {
@@ -650,7 +831,6 @@ function buildExerciseSnapshot(day) {
         if (ex.sets && ex.reps) parts.push(ex.sets + 'x' + ex.reps);
         else if (ex.reps) parts.push(ex.reps);
         else if (ex.sets) parts.push(ex.sets);
-        // Only extract weight from notes column, nothing else
         const weight = extractWeight(ex.notes || '');
         if (weight) parts.push('@ ' + weight);
         desc = parts.join(' ') || '—';
@@ -661,7 +841,7 @@ function buildExerciseSnapshot(day) {
   return snapshot;
 }
 
-// ── NAVIGATION ─────────────────────────────────────────────────
+// NAVIGATION
 function startDay(day) {
   currentDay = day;
   steps = allData[day];
@@ -682,14 +862,10 @@ function renderStep() {
 
   const circuitSteps = steps.filter(s => s.type === 'circuit');
   const circuitIdx = steps.slice(0, currentStep + 1).filter(s => s.type === 'circuit').length;
-  if (step.type === 'circuit') {
-    document.getElementById('progress-text').textContent = `Circuit ${circuitIdx} of ${circuitSteps.length}`;
-  } else {
-    document.getElementById('progress-text').textContent = 'Stretches';
-  }
+  document.getElementById('progress-text').textContent =
+    step.type === 'circuit' ? `Circuit ${circuitIdx} of ${circuitSteps.length}` : 'Stretches';
 
   let html = '';
-
   if (step.type === 'circuit') {
     html += `<div class="circuit-header">
       <h2>${step.label}</h2>
@@ -702,7 +878,6 @@ function renderStep() {
         <div class="exercise-info">
           <div class="exercise-name">${ex.name}</div>
           ${meta ? `<div class="exercise-meta">${meta}</div>` : ''}
-          ${ex.notes && ex.notes !== 'See definitions below' ? `<div class="exercise-notes">${ex.notes}</div>` : ''}
         </div>
         ${hasDef ? `<button class="info-btn" onclick="showDef('${ex.name.replace(/'/g,"\\'")}')">ℹ</button>` : ''}
       </div>`;
@@ -716,7 +891,6 @@ function renderStep() {
         <div class="exercise-info">
           <div class="exercise-name">${ex.name}</div>
           ${dur ? `<div class="exercise-meta">${dur}</div>` : ''}
-          ${ex.notes && ex.notes !== 'See definitions below' ? `<div class="exercise-notes">${ex.notes}</div>` : ''}
         </div>
         ${hasDef ? `<button class="info-btn" onclick="showDef('${ex.name.replace(/'/g,"\\'")}')">ℹ</button>` : ''}
       </div>`;
@@ -733,50 +907,36 @@ function renderStep() {
 }
 
 function goNext() {
-  if (currentStep < steps.length - 1) {
-    currentStep++;
-    renderStep();
-  } else {
-    stopTimer();
-    showLog();
-  }
+  if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+  else { stopTimer(); showLog(); }
 }
 
 function goBack() {
-  if (currentStep > 0) {
-    currentStep--;
-    renderStep();
-  }
+  if (currentStep > 0) { currentStep--; renderStep(); }
 }
 
-// ── LOG ─────────────────────────────────────────────────────────
+// LOG
 function showLog() {
   hide('screen-workout');
   document.getElementById('progress-bar').style.width = '100%';
   document.getElementById('progress-text').textContent = 'Done!';
 
   const elapsed = getElapsedMinutes();
-  const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+  const today = new Date().toLocaleDateString('en-CA');
   const snapshot = buildExerciseSnapshot(currentDay);
 
-  // Store for submitLog
   window._logPayload = { date: today, dayType: currentDay, duration: elapsed, exercises: snapshot };
 
-  // Build summary display
   const m = Math.floor(timerSeconds / 60);
   const s = timerSeconds % 60;
   const timeStr = m + ':' + String(s).padStart(2, '0');
 
   document.getElementById('log-subtitle').textContent = `${currentDay} Day · ${timeStr} · ${today}`;
 
-  let summaryHtml = `<strong>Date:</strong> ${today}<br>
-<strong>Day:</strong> ${currentDay}<br>
-<strong>Duration:</strong> ${elapsed} min<br><br>`;
-
+  let summaryHtml = `<strong>Date:</strong> ${today}<br><strong>Day:</strong> ${currentDay}<br><strong>Duration:</strong> ${elapsed} min<br><br>`;
   for (const [name, val] of Object.entries(snapshot)) {
     summaryHtml += `<strong>${name}:</strong> ${val}<br>`;
   }
-
   document.getElementById('log-summary').innerHTML = summaryHtml;
   show('screen-log');
 }
@@ -795,8 +955,8 @@ async function submitLog() {
     });
     hide('screen-log');
     document.getElementById('timer-bar').style.display = 'none';
-    const s = document.getElementById('screen-success');
-    s.style.display = 'flex';
+    historyLoaded = false; // force history reload next time
+    document.getElementById('screen-success').style.display = 'flex';
   } catch(e) {
     btn.disabled = false;
     btn.textContent = 'Save Workout';
@@ -809,15 +969,16 @@ function showSelect() {
   timerSeconds = 0;
   hide('screen-workout');
   hide('screen-log');
-  hide('screen-success');
   document.getElementById('screen-success').style.display = 'none';
   document.getElementById('timer-bar').style.display = 'none';
   document.getElementById('progress-bar').style.width = '0%';
   document.getElementById('progress-text').textContent = '';
+  // Reset to workout tab
+  switchTab('workout');
   show('screen-select');
 }
 
-// ── MODAL ───────────────────────────────────────────────────────
+// MODAL
 function showDef(name) {
   const def = allData.definitions[name];
   if (!def) return;
@@ -832,7 +993,6 @@ function closeModal(e) {
   }
 }
 
-// ── UTILS ───────────────────────────────────────────────────────
 function show(id) { document.getElementById(id).style.display = 'block'; }
 function hide(id) { document.getElementById(id).style.display = 'none'; }
 
