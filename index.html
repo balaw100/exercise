@@ -631,6 +631,12 @@ function parseSheet(rows) {
 }
 
 // ── BUILD EXERCISE SNAPSHOT ────────────────────────────────────
+function extractWeight(notes) {
+  // Only pull out weight values like "25 lb" or "3lb" — ignore everything else
+  const match = notes.match(/(\d+\.?\d*)\s*lb/i);
+  return match ? match[1] + ' lb' : null;
+}
+
 function buildExerciseSnapshot(day) {
   const snapshot = {};
   const daySteps = allData[day];
@@ -638,15 +644,15 @@ function buildExerciseSnapshot(day) {
     for (const ex of step.exercises) {
       let desc = '';
       if (step.type === 'stretch') {
-        // For stretches, just record duration
         desc = ex.reps || ex.sets || '60 sec';
       } else {
         const parts = [];
         if (ex.sets && ex.reps) parts.push(ex.sets + 'x' + ex.reps);
         else if (ex.reps) parts.push(ex.reps);
         else if (ex.sets) parts.push(ex.sets);
-        // Check col4 for weight — it's stored in notes field from parser
-        if (ex.weight && ex.weight !== ex.reps) parts.push('@ ' + ex.weight);
+        // Only extract weight from notes column, nothing else
+        const weight = extractWeight(ex.notes || '');
+        if (weight) parts.push('@ ' + weight);
         desc = parts.join(' ') || '—';
       }
       snapshot[ex.name] = desc;
