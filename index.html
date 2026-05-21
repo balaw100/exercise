@@ -59,7 +59,6 @@
     flex: 1;
   }
 
-  /* DAY SELECTOR */
   #screen-select {
     display: flex;
     flex-direction: column;
@@ -84,7 +83,6 @@
     text-align: center;
   }
 
-  /* TAB SWITCHER */
   .tab-switcher {
     display: flex;
     width: 100%;
@@ -137,7 +135,6 @@
     opacity: 0.75;
   }
 
-  /* HISTORY */
   #tab-history-content { width: 100%; max-width: 480px; }
 
   .history-loading {
@@ -214,7 +211,6 @@
   .history-ex-name { color: var(--text-dim); }
   .history-ex-val { color: var(--gold); font-weight: 500; }
 
-  /* TIMER */
   #timer-bar {
     display: none;
     width: 100%;
@@ -232,7 +228,6 @@
     letter-spacing: 0.08em;
   }
 
-  /* CIRCUIT VIEW */
   #screen-workout { display: none; }
 
   .circuit-header { margin-bottom: 20px; }
@@ -305,7 +300,6 @@
 
   .info-btn:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
 
-  /* STRETCH SECTION */
   .stretch-header {
     margin: 28px 0 16px;
     padding-top: 20px;
@@ -329,7 +323,6 @@
     gap: 12px;
   }
 
-  /* MODAL */
   #modal-overlay {
     display: none;
     position: fixed;
@@ -381,7 +374,6 @@
 
   #modal-close:hover { color: var(--text); }
 
-  /* NAV BUTTONS */
   .nav-row {
     display: flex;
     gap: 12px;
@@ -420,7 +412,6 @@
 
   .btn-next:hover { background: #fdb93a; }
 
-  /* LOG SCREEN */
   #screen-log { display: none; }
 
   .log-card {
@@ -490,7 +481,6 @@
 
   .btn-restart:hover { border-color: #666; color: var(--text); }
 
-  /* SUCCESS */
   #screen-success {
     display: none;
     flex-direction: column;
@@ -511,7 +501,6 @@
 
   #screen-success p { color: var(--text-dim); font-size: 0.9rem; max-width: 280px; }
 
-  /* LOADING */
   #screen-loading {
     display: flex;
     flex-direction: column;
@@ -545,7 +534,6 @@
     margin-top: 16px;
   }
 
-  /* PROGRESS BAR */
   #progress-bar-wrap { width: 100%; height: 3px; background: #3a3838; }
   #progress-bar { height: 100%; background: var(--gold); transition: width 0.3s ease; }
 
@@ -567,14 +555,12 @@
 
 <div class="container">
 
-  <!-- LOADING -->
   <div id="screen-loading">
     <div class="spinner"></div>
     <p>Loading workout data…</p>
     <div id="error-msg"></div>
   </div>
 
-  <!-- DAY SELECT -->
   <div id="screen-select" style="display:none">
     <h2>Good morning, Bruce.</h2>
     <p id="select-subtitle">What's on the schedule today?</p>
@@ -597,10 +583,8 @@
     </div>
   </div>
 
-  <!-- WORKOUT -->
   <div id="screen-workout"></div>
 
-  <!-- LOG -->
   <div id="screen-log">
     <div class="log-card">
       <h2>Log This Workout</h2>
@@ -611,7 +595,6 @@
     </div>
   </div>
 
-  <!-- SUCCESS -->
   <div id="screen-success">
     <div class="success-icon">✓</div>
     <h2>Logged.</h2>
@@ -621,7 +604,6 @@
 
 </div>
 
-<!-- MODAL -->
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal-box">
     <button id="modal-close" onclick="closeModal()">×</button>
@@ -642,7 +624,6 @@ let currentStep = 0;
 let steps = [];
 let historyLoaded = false;
 
-// TIMER
 let timerInterval = null;
 let timerSeconds = 0;
 
@@ -668,7 +649,12 @@ function getElapsedMinutes() {
   return Math.round(timerSeconds / 60);
 }
 
-// FETCH & PARSE WORKOUT SHEET
+function extractWeight(notes) {
+  if (!notes) return null;
+  const match = notes.match(/(\d+\.?\d*)\s*lb/i);
+  return match ? match[1] + ' lb' : null;
+}
+
 async function loadData() {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
   try {
@@ -718,7 +704,6 @@ function parseSheet(rows) {
   }
 }
 
-// TAB SWITCHER
 function switchTab(tab) {
   const workoutBtn = document.getElementById('tab-workout-btn');
   const historyBtn = document.getElementById('tab-history-btn');
@@ -745,7 +730,6 @@ function switchTab(tab) {
   }
 }
 
-// LOAD HISTORY FROM LOG SHEET
 async function loadHistory() {
   historyLoaded = true;
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${LOG_SHEET_ID}/values/Sheet1?key=${API_KEY}`;
@@ -768,7 +752,7 @@ function renderHistory(rows) {
   }
 
   const headers = rows[0];
-  const dataRows = rows.slice(1).reverse(); // newest first
+  const dataRows = rows.slice(1).reverse();
 
   let html = '';
   dataRows.forEach((row, idx) => {
@@ -777,11 +761,9 @@ function renderHistory(rows) {
     const duration = row[2] || '';
     if (!date) return;
 
-    // Format date nicely
     const dateObj = new Date(date + 'T12:00:00');
     const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
-    // Build exercise rows (cols 3+)
     let exHtml = '';
     for (let i = 3; i < headers.length; i++) {
       const name = headers[i] || '';
@@ -813,12 +795,6 @@ function toggleHistoryCard(idx) {
   card.classList.toggle('open');
 }
 
-// BUILD EXERCISE SNAPSHOT
-function extractWeight(notes) {
-  const match = notes.match(/(\d+\.?\d*)\s*lb/i);
-  return match ? match[1] + ' lb' : null;
-}
-
 function buildExerciseSnapshot(day) {
   const snapshot = {};
   for (const step of allData[day]) {
@@ -841,7 +817,6 @@ function buildExerciseSnapshot(day) {
   return snapshot;
 }
 
-// NAVIGATION
 function startDay(day) {
   currentDay = day;
   steps = allData[day];
@@ -873,7 +848,13 @@ function renderStep() {
     </div>`;
     for (const ex of step.exercises) {
       const hasDef = !!allData.definitions[ex.name];
-      const meta = [ex.sets ? ex.sets + ' sets' : '', ex.reps || ''].filter(Boolean).join(' · ');
+      const weight = extractWeight(ex.notes || '');
+      const metaParts = [];
+      if (ex.sets && ex.reps) metaParts.push(ex.sets + ' sets · ' + ex.reps);
+      else if (ex.reps) metaParts.push(ex.reps);
+      else if (ex.sets) metaParts.push(ex.sets);
+      if (weight) metaParts.push(weight);
+      const meta = metaParts.join(' · ');
       html += `<div class="exercise-card">
         <div class="exercise-info">
           <div class="exercise-name">${ex.name}</div>
@@ -915,7 +896,6 @@ function goBack() {
   if (currentStep > 0) { currentStep--; renderStep(); }
 }
 
-// LOG
 function showLog() {
   hide('screen-workout');
   document.getElementById('progress-bar').style.width = '100%';
@@ -955,7 +935,7 @@ async function submitLog() {
     });
     hide('screen-log');
     document.getElementById('timer-bar').style.display = 'none';
-    historyLoaded = false; // force history reload next time
+    historyLoaded = false;
     document.getElementById('screen-success').style.display = 'flex';
   } catch(e) {
     btn.disabled = false;
@@ -973,12 +953,10 @@ function showSelect() {
   document.getElementById('timer-bar').style.display = 'none';
   document.getElementById('progress-bar').style.width = '0%';
   document.getElementById('progress-text').textContent = '';
-  // Reset to workout tab
   switchTab('workout');
   show('screen-select');
 }
 
-// MODAL
 function showDef(name) {
   const def = allData.definitions[name];
   if (!def) return;
