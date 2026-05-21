@@ -961,7 +961,7 @@ function showDef(name) {
   const def = allData.definitions[name];
   if (!def) return;
   document.getElementById('modal-title').textContent = name;
-  document.getElementById('modal-body').textContent = def;
+document.getElementById('modal-body').innerHTML = def.replace(/\n/g, '<br>');
   document.getElementById('modal-overlay').classList.add('open');
 }
 
