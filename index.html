@@ -218,7 +218,13 @@
     border-bottom: 1px solid #3a3838;
     padding: 8px 24px;
     text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: background 0.15s;
   }
+
+  #timer-bar:active { background: var(--bg3); }
 
   #timer-display {
     font-family: 'DM Sans', sans-serif;
@@ -226,6 +232,19 @@
     color: var(--gold);
     font-weight: 500;
     letter-spacing: 0.08em;
+    transition: color 0.15s;
+  }
+
+  #timer-bar.paused #timer-display { color: var(--text-dim); }
+
+  #timer-hint {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-top: 1px;
+    opacity: 0.7;
   }
 
   #screen-workout { display: none; }
@@ -553,7 +572,10 @@
   <span id="progress-text"></span>
 </header>
 <div id="progress-bar-wrap"><div id="progress-bar" style="width:0%"></div></div>
-<div id="timer-bar"><span id="timer-display">0:00</span></div>
+<div id="timer-bar" onclick="toggleTimer()">
+  <span id="timer-display">0:00</span>
+  <span id="timer-hint">tap to pause</span>
+</div>
 
 <div class="container">
 
@@ -628,10 +650,14 @@ let historyLoaded = false;
 
 let timerInterval = null;
 let timerSeconds = 0;
+let timerPaused = false;
 
 function startTimer() {
   timerSeconds = 0;
+  timerPaused = false;
   document.getElementById('timer-bar').style.display = 'block';
+  document.getElementById('timer-bar').classList.remove('paused');
+  document.getElementById('timer-hint').textContent = 'tap to pause';
   updateTimerDisplay();
   timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
 }
@@ -639,6 +665,24 @@ function startTimer() {
 function stopTimer() {
   clearInterval(timerInterval);
   timerInterval = null;
+}
+
+// Tap the timer bar to pause/resume mid-workout (e.g. taking a phone call).
+// Distinct from stopTimer(), which is the permanent stop when the workout ends.
+function toggleTimer() {
+  const bar = document.getElementById('timer-bar');
+  if (timerPaused) {
+    timerPaused = false;
+    bar.classList.remove('paused');
+    document.getElementById('timer-hint').textContent = 'tap to pause';
+    timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+  } else {
+    timerPaused = true;
+    bar.classList.add('paused');
+    document.getElementById('timer-hint').textContent = 'paused — tap to resume';
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
 }
 
 function updateTimerDisplay() {
@@ -949,10 +993,12 @@ async function submitLog() {
 function showSelect() {
   stopTimer();
   timerSeconds = 0;
+  timerPaused = false;
   hide('screen-workout');
   hide('screen-log');
   document.getElementById('screen-success').style.display = 'none';
   document.getElementById('timer-bar').style.display = 'none';
+  document.getElementById('timer-bar').classList.remove('paused');
   document.getElementById('progress-bar').style.width = '0%';
   document.getElementById('progress-text').textContent = '';
   switchTab('workout');
