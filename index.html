@@ -601,6 +601,14 @@
         Short Day
         <span class="sub">3 circuits · ~15 min</span>
       </button>
+      <button class="day-btn" onclick="startDay('Short Day 1')">
+        Short Day 1
+        <span class="sub">4 circuits · ~15 min</span>
+      </button>
+      <button class="day-btn" onclick="startDay('Short Day 2')">
+        Short Day 2
+        <span class="sub">4 circuits · ~15 min</span>
+      </button>
     </div>
     <div id="tab-history-content" style="display:none; width:100%; max-width:480px">
       <div id="history-list"><div class="history-loading">Loading history…</div></div>
@@ -642,7 +650,19 @@ const LOG_SHEET_ID = '1ZZKYdoCq6GZMKr49nCxtB6JnC3HoDu_qf7JeaaNmw4U';
 const API_KEY     = 'AIzaSyAL-1ytYPq_BnQhEW8huck85Q05Xp5uIuc';
 const LOG_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwmMCVz2IdzxTMvsSiT3DJNFOhrMoD5oM7_RtTfQPJWFwCMPB-ETdXqj1b8nXpnF4EEb0XJ/exec';
 
-let allData = { Long: [], Short: [], definitions: {} };
+// Recognized values in the sheet's "Day" column. Add here if you add another day type.
+const DAY_TYPES = ['Long', 'Short', 'Short Day 1', 'Short Day 2'];
+// Display labels used in headers/history/log — edit here, not scattered through the code.
+const DAY_LABELS = {
+  'Long': 'Long Day',
+  'Short': 'Short Day',
+  'Short Day 1': 'Short Day 1',
+  'Short Day 2': 'Short Day 2'
+};
+
+let allData = { definitions: {} };
+DAY_TYPES.forEach(d => allData[d] = []);
+
 let currentDay = '';
 let currentStep = 0;
 let steps = [];
@@ -716,8 +736,10 @@ async function loadData() {
   }
 }
 
+// The "DAY 1 - LONG" / "DAY 2 - SHORT" style header rows in the sheet are purely
+// cosmetic for humans reading it — this parser doesn't need them. Every data row
+// carries its own Day value (col0), so we just bucket rows by that directly.
 function parseSheet(rows) {
-  let curDay = null;
   let currentCircuit = null;
   let inDefinitions = false;
 
@@ -725,14 +747,11 @@ function parseSheet(rows) {
     const [col0, col1, col2, col3, col4] = row.map(c => (c||'').trim());
     if (!col0 && !col1) continue;
 
-    if (col0.startsWith('DAY 1')) { curDay = 'Long'; inDefinitions = false; continue; }
-    if (col0.startsWith('DAY 2')) { curDay = 'Short'; inDefinitions = false; continue; }
     if (col0 === 'DEFINITIONS') { inDefinitions = true; continue; }
-
     if (inDefinitions) { if (col0) allData.definitions[col0] = col1; continue; }
-    if (!curDay) continue;
+
     const day = col0;
-    if (!day || (day !== 'Long' && day !== 'Short')) continue;
+    if (!DAY_TYPES.includes(day)) continue; // skips section-header rows and anything unrecognized
 
     if (col1.match(/^Circuit \d+/i)) {
       currentCircuit = { type: 'circuit', label: col1, rounds: col2 || '', exercises: [] };
@@ -809,6 +828,7 @@ function renderHistory(rows) {
 
     const dateObj = new Date(date + 'T12:00:00');
     const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    const dayLabel = DAY_LABELS[dayType] || dayType;
 
     let exHtml = '';
     for (let i = 3; i < headers.length; i++) {
@@ -825,7 +845,7 @@ function renderHistory(rows) {
       <div class="history-card-header">
         <div class="history-card-left">
           <div class="history-date">${dateStr}</div>
-          <div class="history-meta">${dayType} Day · ${duration} min</div>
+          <div class="history-meta">${dayLabel} · ${duration} min</div>
         </div>
         <span class="history-chevron">▾</span>
       </div>
@@ -957,7 +977,7 @@ function showLog() {
   const s = timerSeconds % 60;
   const timeStr = m + ':' + String(s).padStart(2, '0');
 
-  document.getElementById('log-subtitle').textContent = `${currentDay} Day · ${timeStr} · ${today}`;
+  document.getElementById('log-subtitle').textContent = `${DAY_LABELS[currentDay] || currentDay} · ${timeStr} · ${today}`;
 
   let summaryHtml = `<strong>Date:</strong> ${today}<br><strong>Day:</strong> ${currentDay}<br><strong>Duration:</strong> ${elapsed} min<br><br>`;
   for (const [name, val] of Object.entries(snapshot)) {
