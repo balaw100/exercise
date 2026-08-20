@@ -122,6 +122,23 @@
     cursor: pointer;
     transition: all 0.2s;
     letter-spacing: 0.03em;
+    position: relative;
+  }
+
+  .next-badge {
+    position: absolute;
+    top: -10px;
+    right: 14px;
+    background: var(--gold);
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   }
 
   .day-btn:hover, .day-btn:active { background: var(--gold); color: var(--bg); }
@@ -742,13 +759,16 @@ async function loadLastDay() {
   }
 }
 
-// Appends a "· Next" tag to whichever Short Day button was NOT logged last.
+// Adds a floating gold "Next" pill to whichever Short Day button was NOT logged last.
 function applyNextBadge() {
   if (lastLoggedDay !== 'Short Day 1' && lastLoggedDay !== 'Short Day 2') return;
   const nextId = lastLoggedDay === 'Short Day 1' ? 'btn-day-short2' : 'btn-day-short1';
   const btn = document.getElementById(nextId);
-  const sub = btn && btn.querySelector('.sub');
-  if (sub) sub.textContent += ' · Next';
+  if (!btn) return;
+  const badge = document.createElement('span');
+  badge.className = 'next-badge';
+  badge.textContent = 'Next';
+  btn.appendChild(badge);
 }
 
 async function loadData() {
