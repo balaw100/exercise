@@ -601,11 +601,11 @@
         Short Day
         <span class="sub">3 circuits · ~15 min</span>
       </button>
-      <button class="day-btn" onclick="startDay('Short Day 1')">
+      <button class="day-btn" id="btn-day-short1" onclick="startDay('Short Day 1')">
         Short Day 1
         <span class="sub">4 circuits · ~15 min</span>
       </button>
-      <button class="day-btn" onclick="startDay('Short Day 2')">
+      <button class="day-btn" id="btn-day-short2" onclick="startDay('Short Day 2')">
         Short Day 2
         <span class="sub">4 circuits · ~15 min</span>
       </button>
@@ -668,6 +668,10 @@ let currentStep = 0;
 let steps = [];
 let historyLoaded = false;
 
+// Tracks which Short Day was logged most recently, so we can badge the other
+// one as "Next" on the home screen. Populated by loadLastDay().
+let lastLoggedDay = null;
+
 let timerInterval = null;
 let timerSeconds = 0;
 let timerPaused = false;
@@ -721,13 +725,40 @@ function extractWeight(notes) {
   return match ? match[1] + ' lb' : null;
 }
 
-async function loadData() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
+// Reads the log sheet and records the Day Type of the most recent entry,
+// so the home screen can badge the *other* Short Day as "Next".
+// Fails silently — a missing badge is not worth blocking the app over.
+async function loadLastDay() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${LOG_SHEET_ID}/values/Sheet1?key=${API_KEY}`;
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
+    const rows = json.values || [];
+    if (rows.length < 2) return; // header only, no logged workouts yet
+    lastLoggedDay = rows[rows.length - 1][1] || null; // Day Type column
+  } catch(e) {
+    lastLoggedDay = null;
+  }
+}
+
+// Appends a "· Next" tag to whichever Short Day button was NOT logged last.
+function applyNextBadge() {
+  if (lastLoggedDay !== 'Short Day 1' && lastLoggedDay !== 'Short Day 2') return;
+  const nextId = lastLoggedDay === 'Short Day 1' ? 'btn-day-short2' : 'btn-day-short1';
+  const btn = document.getElementById(nextId);
+  const sub = btn && btn.querySelector('.sub');
+  if (sub) sub.textContent += ' · Next';
+}
+
+async function loadData() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
+  try {
+    const [res] = await Promise.all([fetch(url), loadLastDay()]);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
     parseSheet(json.values);
+    applyNextBadge();
     show('screen-select');
     hide('screen-loading');
   } catch(e) {
